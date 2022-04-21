@@ -1,3 +1,5 @@
+// import mysql2
+const mysql = require('mysql2');
 // import express
 const express = require('express');
 
@@ -8,6 +10,18 @@ const app = express();
 // express middleware
 app.use(express.urlencoded({ extended: false}));
 app.use(express.json());
+
+// connect to database (mysql)
+const db = mysql.createConnection(
+    {
+        host: 'localhost',
+        // my sql username
+        user: 'root',
+        password: 'krich',
+        database: 'election'
+    },
+    console.log('Connected to the election database.')
+)
 
 // default response for any other request not supported by the app (not found)
 // catch all for endpoints not supported
