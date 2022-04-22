@@ -25,10 +25,38 @@ const db = mysql.createConnection(
 
 // query database to test connection by returning all data in candidates table
 // query method exectues callback with resulting rows matching the query
-db.query(`SELECT * FROM candidates`, (err, rows) => {
-    // display each row as an object
-    console.log(rows);
-})
+// db.query(`SELECT * FROM candidates`, (err, rows) => {
+//     // display each row as an object
+//     console.log(rows);
+// });
+
+// get a single candidate
+// db.query(`SELECT * FROM candidates WHERE id = 1`, (err, row) => {
+//     if (err) {
+//         console.log(err);
+//     }
+//     console.log(row);
+// });
+
+// delete a candidate
+// db.query(`DELETE FROM candidates WHERE id = ?`, 1, (err, result) => {
+//     if (err) {
+//         console.log(err);
+//     }
+//     console.log(result);
+// });
+
+// create a candidate
+const sql = `INSERT INTO candidates (id, first_name, last_name, industry_connected)
+    VALUES (?,?,?,?)`;
+const params = [1, 'Ronald', 'Firbank', 1];
+
+db.query(sql, params, (err, result) => {
+    if (err) {
+     console.log(err);
+    }
+    console.log(result);
+});
 
 // default response for any other request not supported by the app (not found)
 // catch all for endpoints not supported
