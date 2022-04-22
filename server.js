@@ -21,7 +21,14 @@ const db = mysql.createConnection(
         database: 'election'
     },
     console.log('Connected to the election database.')
-)
+);
+
+// query database to test connection by returning all data in candidates table
+// query method exectues callback with resulting rows matching the query
+db.query(`SELECT * FROM candidates`, (err, rows) => {
+    // display each row as an object
+    console.log(rows);
+})
 
 // default response for any other request not supported by the app (not found)
 // catch all for endpoints not supported
