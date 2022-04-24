@@ -3,6 +3,8 @@ const mysql = require('mysql2');
 // import express
 const express = require('express');
 const res = require('express/lib/response');
+// import inputCheck function
+const inputCheck = require('./utils/inputCheck');
 
 // designate port & app
 const PORT = process.env.PORT || 3001;
@@ -89,12 +91,34 @@ app.delete('/api/candidate/:id', (req, res) => {
     });
 });
 
-// db.query(sql, params, (err, result) => {
-//     if (err) {
-//      console.log(err);
-//     }
-//     console.log(result);
-// });
+// Create a candidate
+// post rute used to instert a candidate into table
+// using object descructuring to pull body out of the request object
+app.post('/api/candidate', ({ body }, res) => {
+    // validate user added user date prior to entering it into the database
+    // if inputCheck returns an error, return 400 err to promt new user request & reasons for err
+    const errors = inputCheck(body, 'first_name', 'last_name', 'industry_connected');
+    if (errors) {
+      res.status(400).json({ error: errors });
+      return;
+    }
+    // instert candidate row information
+    const sql = `INSERT INTO candidates (first_name, last_name, industry_connected)
+    VALUES (?,?,?)`;
+    const params = [body.first_name, body.last_name, body.industry_connected];
+
+    // execute prepared SQL statement above
+    db.query(sql, params, (err, result) => {
+        if (err) {
+            res.status(400).json({ error: err.message });
+            return;
+        }
+        res.json({
+            message: 'success',
+            data: body
+        });
+    });
+});
 
 // default response for any other request not supported by the app (not found)
 // catch all for endpoints not supported
