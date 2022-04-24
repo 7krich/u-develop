@@ -75,9 +75,10 @@ app.delete('/api/candidate/:id', (req, res) => {
         // if request prompts an error, respond with error message
         if (err) {
             res.statusMessage(400).json({ error: res.message });
-        // if there are no affected rows let user know that the candidate doesn't exist
+        //prvent user from deleting candidate that does not exist
         } else if (!result.affectedRows) {
             res.json({
+            // if there are no affected rows let user know that the candidate doesn't exist
             message: 'Candidate not found'
             });
         } else {

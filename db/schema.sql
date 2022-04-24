@@ -4,3 +4,10 @@ CREATE TABLE candidates (
     last_name VARCHAR(30) NOT NULL,
     industry_connected BOOLEAN NOT NULL
 );
+
+CREATE TABLE parties (
+    id INTEGER AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
+    /* use text so there is no limit on characters */
+    description TEXT
+);
