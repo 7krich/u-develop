@@ -2,6 +2,7 @@
 const mysql = require('mysql2');
 // import express
 const express = require('express');
+const res = require('express/lib/response');
 
 // designate port & app
 const PORT = process.env.PORT || 3001;
@@ -45,12 +46,23 @@ app.get('/api/candidates', (req, res) => {
 });
 
 // get a single candidate
-// db.query(`SELECT * FROM candidates WHERE id = 1`, (err, row) => {
-//     if (err) {
-//         console.log(err);
-//     }
-//     console.log(row);
-// });
+app.get('/api/candidate/:id', (req, res) => {
+    const sql = `SELECT * FROM candidates WHERE id = ?`;
+    // assign input id as an array to that it can be passed into query call below
+    const params = [req.params.id];
+
+    db.query(sql, params, (err, row) => {
+        if (err) {
+            // notify client request wasn't accepted & to try a diff request
+            res.status(400).json({ error: err.message });
+            return;
+        }
+        res.json({
+            message:'sucess',
+            data: row
+        });
+    });
+});
 
 // delete a candidate
 // db.query(`DELETE FROM candidates WHERE id = ?`, 1, (err, result) => {
