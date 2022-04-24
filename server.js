@@ -30,7 +30,16 @@ const db = mysql.createConnection(
 // query method exectues callback with resulting rows matching the query
 // Get all candidates
 app.get('/api/candidates', (req, res) => {
-    const sql = `SELECT * FROM candidates`;
+    // select all fields in candidates table using wildcard found via dot notiation
+    // also select the name of the parties from the parties table (using parties.name)
+    // rename that added column party_name so it doesn't just list name in the joined table
+    // use left join so we return the whole candidates table, with just the party name selected
+    // return the parties where the candidate's party_id equals the party id from the parties table
+    const sql = `SELECT candidates.*, parties.name
+                AS party_name
+                FROM candidates
+                LEFT JOIN parties
+                ON candidates.party_id = parties.id`;
 
     db.query(sql, (err, rows) => {
         if (err) {
@@ -49,7 +58,17 @@ app.get('/api/candidates', (req, res) => {
 
 // get a single candidate
 app.get('/api/candidate/:id', (req, res) => {
-    const sql = `SELECT * FROM candidates WHERE id = ?`;
+    // select all the fields in the candidates table and select the names from the parties table
+    // rename the parties.name as party_name so the column doesn't just list name as the title
+    // use left join to display a table that returns the entire candidates table and the selects items from the parties table
+    // provide results where the candidates party id equals the foreign key party id
+    // perform this when the single candidate id is provided
+    const sql = `SELECT candidates.*, parties.name
+                AS party_name
+                FROM candidates
+                LEFT JOIN parties
+                ON candidates.party_id = parties.id
+                WHERE candidates.id = ?`;
     // assign input id as an array to that it can be passed into query call below
     const params = [req.params.id];
 
