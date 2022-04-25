@@ -140,6 +140,39 @@ app.post('/api/candidate', ({ body }, res) => {
     });
 });
 
+// update a candidate's party
+app.put('/api/candidate/:id', (req, res) => {
+    // make sure party_id is provided before attempt to update db is made
+    const errors = inputCheck(req.body, 'party_id');
+
+    // if no party_id respond to user with error
+    if (errors) {
+        res.status(400).json({ error: errors });
+    };
+
+    const sql = `UPDATE candidates SET party_id = ?
+                WHERE id = ?`;
+    // use parameter for candidates id so it is a part of the route
+    // use request body for party id so signifty field actually being updated is part of the body
+    const params = [req.body.party_id, req.params.id];
+    db.query(sql, params, (err, result) => {
+        if (err) {
+            res.status(400).json({ error: err.message });
+            // check if a record was found
+        } else if (!result.affectedRows) {
+            res.json({
+                message: 'Candidate not found'
+            });
+        } else {
+            res.json({
+                message: 'success',
+                data: req.body,
+                changes: result.affectedRows
+            });
+        }
+    });
+});
+
 // display all parties
 app.get('/api/parties', (req, res) => {
     const sql = `SELECT * FROM parties`;
@@ -171,7 +204,7 @@ app.get('/api/party:id', (req, res) => {
     });
 });
 
-// delete parties
+// delete a party
 app.delete('/api/party/:id', (req, res) => {
     const sql = `DELETE FROM parties WHERE id = ?`;
     const params = [req.params.id];
